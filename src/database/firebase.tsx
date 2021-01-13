@@ -1,4 +1,3 @@
-// Firebase App (the core Firebase SDK) is always required and must be listed first
 import firebase from "firebase/app";
 import "firebase/firestore";
 const firebaseConfig = {
@@ -10,7 +9,7 @@ const firebaseConfig = {
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGINGSENDERID,
     appId: process.env.REACT_APP_FIREBASE_APPID,
 };
-// Initialize Firebase
+console.log(firebaseConfig);
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 export default db;
