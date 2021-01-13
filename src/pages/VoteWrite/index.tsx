@@ -65,12 +65,16 @@ const VoteWrite: React.FC = () => {
     };
     const handleClickSave = () => {
         if(validation()){
-            db.collection("voting").add({
+            const newVotingRef = db.collection("voting").doc();
+            const id = newVotingRef.id;
+            newVotingRef.set({
+                id: id,
                 title: title,
                 content: content,
                 startDateTime: startDateTime,
                 finishDateTime: finishDateTime,
                 options: options,
+                date: new Date(),
             }).then(function(docRef){
                 alert("성공적으로 저장되었습니다.");
                 history.push("/");
