@@ -3,6 +3,7 @@ import React, { ChangeEvent, useCallback, useState } from 'react';
 import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
+import db from '../../database/firebase';
 
 const VoteWrite: React.FC = () => {
     const history = useHistory();
@@ -64,7 +65,18 @@ const VoteWrite: React.FC = () => {
     };
     const handleClickSave = () => {
         if(validation()){
-            
+            db.collection("voting").add({
+                title: title,
+                content: content,
+                startDateTime: startDateTime,
+                finishDateTime: finishDateTime,
+                options: options,
+            }).then(function(docRef){
+                alert("성공적으로 저장되었습니다.");
+                history.push("/");
+            }).catch(function(error){
+                alert("저장중에 에러가 발생하였습니다.");
+            })
         }
     };
     const validation = () => {
