@@ -8,12 +8,34 @@ const VoteWrite: React.FC = () => {
     const history = useHistory();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const now = new Date();
+    const tomorrow = new Date();
+    now.setTime(now.getTime()+3600000*9); // 현재한국현지시간
+    tomorrow.setTime(now.getTime()+3600000*24); // 내일한국현지시간
+    const [startDateTime, setStartDateTime] = useState(now.toISOString().substr(0, 19));
+    const [finishDateTime, setFinishDateTime] = useState(tomorrow.toISOString().substr(0, 19));
     const [options, setOptions] = useState(["","",""]);
     const handleChangeTitle = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setTitle(e.currentTarget.value)
     };
     const handleChangeContent = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setContent(e.currentTarget.value)
+    };
+    const handleChangeStartDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const startDateTime = e.currentTarget.value;
+        if(finishDateTime<startDateTime){
+            alert("종료시간보다 이후시간를 선택하실 수 없습니다.")
+        }else{
+            setStartDateTime(startDateTime)
+        }
+    };
+    const handleChangeFinishDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const finishDateTime = e.currentTarget.value;
+        if(finishDateTime<startDateTime){
+            alert("시작시간보다 이전시간를 선택하실 수 없습니다.")
+        }else{
+            setFinishDateTime(e.currentTarget.value)
+        }
     };
     const handleChangeOption = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const index = Number(e.currentTarget.name);
@@ -41,7 +63,26 @@ const VoteWrite: React.FC = () => {
         }
     };
     const handleClickSave = () => {
-
+        if(validation()){
+            
+        }
+    };
+    const validation = () => {
+        if(title===""){
+            alert("제목이 입력되지 않았습니다.");
+            return false;
+        }else if(startDateTime===""){
+            alert("시작일시가 입력되지 않았습니다.");
+            return false;
+        }else if(finishDateTime===""){
+            alert("종료일시가 입력되지 않았습니다.");
+            return false;
+        }else if(options.filter(value=>value==="").length>0){
+            alert("입력되지 않은 옵션이 있습니다.")
+        }else if(new Set(options).size !== options.length){
+            alert("내용이 중복된 옵션이 있습니다.")
+        }
+        return true;
     };
     return (
         <Container>
@@ -63,6 +104,38 @@ const VoteWrite: React.FC = () => {
                             내용
                         </InputLabel>
                         <TextField value={content} onChange={handleChangeContent} fullWidth variant={"outlined"} multiline rows={5} rowsMax={5}/>
+                    </Grid>
+                    <Grid item container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <InputLabel shrink>
+                                시작일시
+                            </InputLabel>
+                            <TextField
+                                type="datetime-local"
+                                variant="outlined"
+                                fullWidth
+                                value={startDateTime}
+                                onChange={handleChangeStartDateTime}
+                                InputLabelProps={{
+                                shrink: true,
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <InputLabel shrink>
+                                종료일시
+                            </InputLabel>
+                            <TextField
+                                type="datetime-local"
+                                variant="outlined"
+                                fullWidth
+                                value={finishDateTime}
+                                onChange={handleChangeFinishDateTime}
+                                InputLabelProps={{
+                                shrink: true,
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid item>
                         <InputLabel shrink>
