@@ -103,7 +103,7 @@ const VoteSelect: React.FC = () => {
                                         시작일시
                                     </InputLabel>
                                     <Typography variant={"body1"}>
-                                        {startDateTime}
+                                        {startDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -111,7 +111,7 @@ const VoteSelect: React.FC = () => {
                                         종료일시
                                     </InputLabel>
                                     <Typography variant={"body1"}>
-                                        {finishDateTime}
+                                        {finishDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
                             </Grid>

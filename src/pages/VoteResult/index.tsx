@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, OutlinedInput, TextField, Typography } from '@material-ui/core';
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import db from '../../database/firebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../modules';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const VoteResult: React.FC = () => {
     const history = useHistory();
@@ -23,34 +24,10 @@ const VoteResult: React.FC = () => {
     const [options, setOptions] = useState(["","",""]);
     const [status, setStatus] = useState("before");
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-    const handleClickOption = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
-        const index = Number(e.currentTarget.value);
-        setSelectedIndex(index);
-    };
-    const handleClickCancel = () => {
+    const [result, setResult] = useState({});
+    const handleClickConfirm = () => {
         history.push("/");
     };
-    const handleClickSave = () => {
-        if(validation()){
-            if(window.confirm("투표 하시겠습니까?")){
-                const obj:any = {"result":{}};
-                obj.result[userId] = selectedIndex;
-                db.collection("voting").doc(docId).update(obj).then(()=>{
-                    alert("투표 완료되었습니다.");
-                    history.push("/");
-                }).catch(()=>{
-                    alert("에러가 발생했습니다.");
-                })
-            }
-        }
-    };
-    const validation = () => {
-        if(selectedIndex===-1){
-            alert("선택되지 않았습니다.")
-            return false
-        }
-        return true
-    }
     useEffect(()=>{
         db.collection("voting").doc(docId).get().then((doc) => {
             const data = doc.data();
@@ -59,7 +36,8 @@ const VoteResult: React.FC = () => {
             setStartDateTime(data?.startDateTime);
             setFinishDateTime(data?.finishDateTime);
             setOptions(data?.options);
-            setSelectedIndex(data?.result[userId]||-1);
+            setSelectedIndex(data?.result[userId]===undefined?-1:data.result[userId]);
+            setResult(data?.result);
             setStatus("done");
         }).catch((error)=>{
             setStatus("error");
@@ -70,7 +48,7 @@ const VoteResult: React.FC = () => {
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"stretch"}>
                 <Grid item style={{padding:"30px 0px"}}>
                     <Typography variant={"h4"}>
-                        투표하기
+                        투표결과확인
                     </Typography>
                 </Grid>
                 {
@@ -103,7 +81,7 @@ const VoteResult: React.FC = () => {
                                         시작일시
                                     </InputLabel>
                                     <Typography variant={"body1"}>
-                                        {startDateTime}
+                                        {startDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -111,7 +89,7 @@ const VoteResult: React.FC = () => {
                                         종료일시
                                     </InputLabel>
                                     <Typography variant={"body1"}>
-                                        {finishDateTime}
+                                        {finishDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -122,16 +100,16 @@ const VoteResult: React.FC = () => {
                                 <Grid container direction={"column"} justify={"flex-start"} alignItems={"stretch"} style={{gap:8}}>
                                     {
                                         options.map((option:string, index:number)=>{
+                                            const count = Object.values(result).filter(e=>e===index).length;
+                                            const total = Object.keys(result).length;
+                                            const props = count / total * 100
                                             return (
                                                 <Grid item key={option}>
-                                                    <Button
-                                                    value={index}
-                                                    onClick={handleClickOption}
-                                                    variant={"outlined"}
-                                                    fullWidth
-                                                    style={selectedIndex===index?{border:"solid 5px #00C896"}:{}}>
-                                                        {option}
-                                                    </Button>
+                                                    <Typography variant={"body2"}>
+                                                        {`${option} (${count}/${total}, ${props}%)`}
+                                                        {selectedIndex===index?<CheckCircleIcon color="primary"/>:null}
+                                                    </Typography>
+                                                    <LinearProgress variant="determinate" value={props}  color="primary"/>
                                                 </Grid>
                                             )
                                         })
@@ -140,8 +118,7 @@ const VoteResult: React.FC = () => {
                             </Grid>
                         </Grid>
                         <Grid item container direction="row" justify="flex-end" style={{padding:"30px 0px", gap:8}}>
-                            <Button onClick={handleClickCancel} variant={"outlined"}>취소</Button>
-                            <Button onClick={handleClickSave} variant={"outlined"}>저장</Button>
+                            <Button onClick={handleClickConfirm} variant={"outlined"}>확인</Button>
                         </Grid>
                     </React.Fragment>
                     :status==="error"
