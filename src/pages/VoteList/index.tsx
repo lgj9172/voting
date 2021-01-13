@@ -11,6 +11,9 @@ const VoteList: React.FC = () => {
     const userId = useSelector((state: RootState) => state.main.id)
     const history = useHistory();
     const dispatch = useDispatch();
+    const now = new Date();
+    now.setTime(now.getTime()+3600000*9); // 현재한국현지시간
+    const [nowDateTime, setNowDateTime] = useState(now.toISOString().substr(0, 19));
     const [votings, setVotings] = useState([]);
     const [status, setStatus] = useState("before");
     const handleClickUser = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -96,6 +99,19 @@ const VoteList: React.FC = () => {
                                 </Grid>
                                 <Grid item>
                                     <Typography variant={"body1"}>{`생성자 : ${voting.writer}`}</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant={"body1"}>
+                                        {
+                                            voting.finishDateTime > nowDateTime && voting.startDateTime < nowDateTime
+                                            ?"진행중"
+                                            :voting.finishDateTime < nowDateTime
+                                            ?"투표종료"
+                                            :voting.startDateTime > nowDateTime
+                                            ?"투표진행전"
+                                            :""
+                                        }
+                                    </Typography>
                                 </Grid>
                                 <Grid item container style={{gap:8}}>
                                     {
