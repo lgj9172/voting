@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import VoteList from '../pages/VoteList';
-import VoteDetail from '../pages/VoteDetail';
+import VoteSelect from '../pages/VoteSelect';
 import VoteUpdate from '../pages/VoteUpdate';
 import VoteWrite from '../pages/VoteWrite';
 
@@ -11,7 +11,7 @@ const Root: React.FC = () => {
             <Switch>
                 <Route path="/" exact component={VoteList} />
                 <Route path="/write" component={VoteWrite} />
-                <Route path="/detail" component={VoteDetail} />
+                <Route path="/select" component={VoteSelect} />
                 <Route path="/update" component={VoteUpdate} />
                 <Redirect path="*" to="/" />
             </Switch>

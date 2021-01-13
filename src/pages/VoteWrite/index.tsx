@@ -75,6 +75,7 @@ const VoteWrite: React.FC = () => {
                 finishDateTime: finishDateTime,
                 options: options,
                 date: new Date(),
+                result: {},
             }).then(function(docRef){
                 alert("성공적으로 저장되었습니다.");
                 history.push("/");

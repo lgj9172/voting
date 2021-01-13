@@ -4,9 +4,12 @@ import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
 import db from '../../database/firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../modules';
 
-const VoteUpdate: React.FC = () => {
+const VoteSelect: React.FC = () => {
     const history = useHistory();
+    const userId = useSelector((state: RootState) => state.main.id);
     const pathname = window.location.pathname;
     const docId = pathname.substring(pathname.lastIndexOf('/') + 1);
     const [title, setTitle] = useState("");
@@ -19,78 +22,35 @@ const VoteUpdate: React.FC = () => {
     const [finishDateTime, setFinishDateTime] = useState(tomorrow.toISOString().substr(0, 19));
     const [options, setOptions] = useState(["","",""]);
     const [status, setStatus] = useState("before");
-    const handleChangeTitle = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setTitle(e.currentTarget.value)
-    };
-    const handleChangeContent = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setContent(e.currentTarget.value)
-    };
-    const handleChangeStartDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const startDateTime = e.currentTarget.value;
-        if(finishDateTime<startDateTime){
-            alert("종료시간보다 이후시간을 선택하실 수 없습니다.")
-        }else{
-            setStartDateTime(startDateTime)
-        }
-    };
-    const handleChangeFinishDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const finishDateTime = e.currentTarget.value;
-        if(finishDateTime<startDateTime){
-            alert("시작시간보다 이전시간을 선택하실 수 없습니다.")
-        }else{
-            setFinishDateTime(e.currentTarget.value)
-        }
-    };
-    const handleChangeOption = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const index = Number(e.currentTarget.name);
-        const value = e.currentTarget.value;
-        setOptions(options => {
-            const newOptions = [...options]
-            newOptions[index] = value;
-            return newOptions;
-        });
+    const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+    const handleClickOption = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
+        const index = Number(e.currentTarget.value);
+        setSelectedIndex(index);
     };
     const handleClickCancel = () => {
-        if(window.confirm("정말 취소하시겠습니까?")){
-            history.push("/");
-        }
+        history.push("/");
     };
     const handleClickSave = () => {
         if(validation()){
-            db.collection("voting").doc(docId).update({
-                id: docId,
-                title: title,
-                content: content,
-                startDateTime: startDateTime,
-                finishDateTime: finishDateTime,
-                options: options,
-                date: new Date(),
-                result: {},
-            }).then(function(docRef){
-                alert("성공적으로 저장되었습니다.");
-                history.push("/");
-            }).catch(function(error){
-                alert("저장중에 에러가 발생하였습니다.");
-            })
+            if(window.confirm("투표 하시겠습니까?")){
+                const obj:any = {"result":{}};
+                obj.result[userId] = selectedIndex;
+                db.collection("voting").doc(docId).update(obj).then(()=>{
+                    alert("투표 완료되었습니다.");
+                    history.push("/");
+                }).catch(()=>{
+                    alert("에러가 발생했습니다.");
+                })
+            }
         }
     };
     const validation = () => {
-        if(title===""){
-            alert("제목이 입력되지 않았습니다.");
-            return false;
-        }else if(startDateTime===""){
-            alert("시작일시가 입력되지 않았습니다.");
-            return false;
-        }else if(finishDateTime===""){
-            alert("종료일시가 입력되지 않았습니다.");
-            return false;
-        }else if(options.filter(value=>value==="").length>0){
-            alert("입력되지 않은 옵션이 있습니다.")
-        }else if(new Set(options).size !== options.length){
-            alert("내용이 중복된 옵션이 있습니다.")
+        if(selectedIndex===-1){
+            alert("선택되지 않았습니다.")
+            return false
         }
-        return true;
-    };
+        return true
+    }
     useEffect(()=>{
         db.collection("voting").doc(docId).get().then((doc) => {
             const data = doc.data();
@@ -99,6 +59,7 @@ const VoteUpdate: React.FC = () => {
             setStartDateTime(data?.startDateTime);
             setFinishDateTime(data?.finishDateTime);
             setOptions(data?.options);
+            setSelectedIndex(data?.result[userId]||-1);
             setStatus("done");
         }).catch((error)=>{
             setStatus("error");
@@ -109,7 +70,7 @@ const VoteUpdate: React.FC = () => {
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"stretch"}>
                 <Grid item style={{padding:"30px 0px"}}>
                     <Typography variant={"h4"}>
-                        투표 수정
+                        투표하기
                     </Typography>
                 </Grid>
                 {
@@ -124,44 +85,34 @@ const VoteUpdate: React.FC = () => {
                                 <InputLabel shrink>
                                     제목
                                 </InputLabel>
-                                <TextField value={title} onChange={handleChangeTitle} fullWidth variant={"outlined"}/>
+                                <Typography variant={"h6"}>
+                                    {title}
+                                </Typography>
                             </Grid>
                             <Grid item>
                                 <InputLabel shrink>
                                     내용
                                 </InputLabel>
-                                <TextField value={content} onChange={handleChangeContent} fullWidth variant={"outlined"} multiline rows={5} rowsMax={5}/>
+                                <Typography variant={"body1"}>
+                                    {content}
+                                </Typography>
                             </Grid>
                             <Grid item container spacing={2}>
                                 <Grid item xs={12} sm={6}>
                                     <InputLabel shrink>
                                         시작일시
                                     </InputLabel>
-                                    <TextField
-                                        type="datetime-local"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={startDateTime}
-                                        onChange={handleChangeStartDateTime}
-                                        InputLabelProps={{
-                                        shrink: true,
-                                        }}
-                                    />
+                                    <Typography variant={"body1"}>
+                                        {startDateTime}
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <InputLabel shrink>
                                         종료일시
                                     </InputLabel>
-                                    <TextField
-                                        type="datetime-local"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={finishDateTime}
-                                        onChange={handleChangeFinishDateTime}
-                                        InputLabelProps={{
-                                        shrink: true,
-                                        }}
-                                    />
+                                    <Typography variant={"body1"}>
+                                        {finishDateTime}
+                                    </Typography>
                                 </Grid>
                             </Grid>
                             <Grid item>
@@ -172,13 +123,15 @@ const VoteUpdate: React.FC = () => {
                                     {
                                         options.map((option:string, index:number)=>{
                                             return (
-                                                <Grid item key={index}>
-                                                    <OutlinedInput
+                                                <Grid item key={option}>
+                                                    <Button
+                                                    value={index}
+                                                    onClick={handleClickOption}
+                                                    variant={"outlined"}
                                                     fullWidth
-                                                    value={option}
-                                                    name={`${index}`}
-                                                    onChange={handleChangeOption}
-                                                    />
+                                                    style={selectedIndex===index?{border:"solid 5px #00C896"}:{}}>
+                                                        {option}
+                                                    </Button>
                                                 </Grid>
                                             )
                                         })
@@ -203,4 +156,4 @@ const VoteUpdate: React.FC = () => {
     )
 }
 
-export default VoteUpdate;
+export default VoteSelect;
