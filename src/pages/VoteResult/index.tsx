@@ -102,7 +102,7 @@ const VoteResult: React.FC = () => {
                                         options.map((option:string, index:number)=>{
                                             const count = Object.values(result).filter(e=>e===index).length;
                                             const total = Object.keys(result).length;
-                                            const props = count / total * 100
+                                            const props = count / (total||1) * 100 // count가 0인 경우 대비
                                             return (
                                                 <Grid item key={option}>
                                                     <Typography variant={"body2"}>
