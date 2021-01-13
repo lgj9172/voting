@@ -92,7 +92,10 @@ const VoteList: React.FC = () => {
                                     <Typography variant={"h5"}>{voting.title}</Typography>
                                 </Grid>
                                 <Grid item>
-                                    {voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}
+                                    <Typography variant={"body1"}>{voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant={"body1"}>{`생성자 : ${voting.writer}`}</Typography>
                                 </Grid>
                                 <Grid item container style={{gap:8}}>
                                     {
