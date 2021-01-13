@@ -120,7 +120,7 @@ const VoteList: React.FC = () => {
                                         :null
                                     }
                                     {
-                                        userId!=="admin"
+                                        userId!=="admin" && voting.finishDateTime > nowDateTime && voting.startDateTime < nowDateTime
                                         ?<Button onClick={handleClickSelect} name={voting.id} variant="outlined">투표하기</Button>
                                         :null
                                     }
