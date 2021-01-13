@@ -4,9 +4,12 @@ import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
 import db from '../../database/firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../modules';
 
 const VoteUpdate: React.FC = () => {
     const history = useHistory();
+    const userId = useSelector((state: RootState) => state.main.id);
     const pathname = window.location.pathname;
     const docId = pathname.substring(pathname.lastIndexOf('/') + 1);
     const [title, setTitle] = useState("");
@@ -59,6 +62,7 @@ const VoteUpdate: React.FC = () => {
         if(validation()){
             db.collection("voting").doc(docId).update({
                 id: docId,
+                writer: userId,
                 title: title,
                 content: content,
                 startDateTime: startDateTime,

@@ -4,9 +4,12 @@ import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
 import db from '../../database/firebase';
+import { RootState } from '../../modules';
+import { useSelector } from 'react-redux';
 
 const VoteWrite: React.FC = () => {
     const history = useHistory();
+    const userId = useSelector((state: RootState) => state.main.id);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const now = new Date();
@@ -69,6 +72,7 @@ const VoteWrite: React.FC = () => {
             const id = newVotingRef.id;
             newVotingRef.set({
                 id: id,
+                writer: userId,
                 title: title,
                 content: content,
                 startDateTime: startDateTime,
