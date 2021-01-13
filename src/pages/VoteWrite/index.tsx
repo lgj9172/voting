@@ -25,7 +25,7 @@ const VoteWrite: React.FC = () => {
     const handleChangeStartDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const startDateTime = e.currentTarget.value;
         if(finishDateTime<startDateTime){
-            alert("종료시간보다 이후시간를 선택하실 수 없습니다.")
+            alert("종료시간보다 이후시간을 선택하실 수 없습니다.")
         }else{
             setStartDateTime(startDateTime)
         }
@@ -33,7 +33,7 @@ const VoteWrite: React.FC = () => {
     const handleChangeFinishDateTime = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const finishDateTime = e.currentTarget.value;
         if(finishDateTime<startDateTime){
-            alert("시작시간보다 이전시간를 선택하실 수 없습니다.")
+            alert("시작시간보다 이전시간을 선택하실 수 없습니다.")
         }else{
             setFinishDateTime(e.currentTarget.value)
         }
