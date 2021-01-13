@@ -59,7 +59,7 @@ const VoteSelect: React.FC = () => {
             setStartDateTime(data?.startDateTime);
             setFinishDateTime(data?.finishDateTime);
             setOptions(data?.options);
-            setSelectedIndex(data?.result[userId]||-1);
+            setSelectedIndex(data?.result[userId]===undefined?-1:data.result[userId]);
             setStatus("done");
         }).catch((error)=>{
             setStatus("error");
