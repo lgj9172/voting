@@ -44,7 +44,7 @@ const VoteList: React.FC = () => {
                 padding: 10,
                 background: '#888888'
             }}>
-                <Typography>
+                <Typography component="div">
                     <Box fontWeight={900}>
                         사용자변경하기(현재사용자:{userId})
                     </Box>
