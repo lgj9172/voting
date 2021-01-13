@@ -19,9 +19,13 @@ const VoteList: React.FC = () => {
     const handleClickWrite = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         history.push('/write');
     }
-    const handleClickVote = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleClickSelect = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         const id = e.currentTarget.name;
         history.push(`/select/${id}`);
+    }
+    const handleClickResult = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const id = e.currentTarget.name;
+        history.push(`/result/${id}`);
     }
     const handleClickUpdate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         const id = e.currentTarget.name;
@@ -92,18 +96,18 @@ const VoteList: React.FC = () => {
                                 </Grid>
                                 <Grid item container style={{gap:8}}>
                                     {
-                                        userId!=="admin"&&(voting.result[userId]===undefined)
-                                        ?<Button onClick={handleClickVote} name={voting.id} variant="outlined">투표하기</Button>
-                                        :null
-                                    }
-                                    {
-                                        userId!=="admin"&&(voting.result[userId]>0)
-                                        ?<Button onClick={handleClickVote} name={voting.id} variant="outlined">결과보기</Button>
-                                        :null
-                                    }
-                                    {
                                         userId==="admin"
                                         ?<Button onClick={handleClickUpdate} name={voting.id} variant="outlined">수정하기</Button>
+                                        :null
+                                    }
+                                    {
+                                        userId!=="admin"
+                                        ?<Button onClick={handleClickSelect} name={voting.id} variant="outlined">투표하기</Button>
+                                        :null
+                                    }
+                                    {
+                                        userId!=="admin"||userId==="admin"
+                                        ?<Button onClick={handleClickResult} name={voting.id} variant="outlined">결과보기</Button>
                                         :null
                                     }
                                 </Grid>
