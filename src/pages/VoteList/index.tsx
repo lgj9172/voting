@@ -19,11 +19,13 @@ const VoteList: React.FC = () => {
     const handleClickWrite = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         history.push('/write');
     }
-    const handleClickDetail = () => {
-        history.push('/detail');
+    const handleClickDetail = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const id = e.currentTarget.name;
+        history.push(`/detail/${id}`);
     }
-    const handleClickUpdate = () => {
-        history.push('/update');
+    const handleClickUpdate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const id = e.currentTarget.name;
+        history.push(`/update/${id}`);
     }
     useEffect(()=>{
         db.collection("voting").get().then((querySnapshot) => {
@@ -53,7 +55,7 @@ const VoteList: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}>
-                    <Button onClick={handleClickUser} value={"admin"} variant={"contained"} size={"small"}>생성자</Button>
+                    <Button onClick={handleClickUser} value={"admin"} variant={"contained"} size={"small"}>admin</Button>
                     <Button onClick={handleClickUser} value={"user1"} variant={"contained"} size={"small"}>user1</Button>
                     <Button onClick={handleClickUser} value={"user2"} variant={"contained"} size={"small"}>user2</Button>
                     <Button onClick={handleClickUser} value={"user3"} variant={"contained"} size={"small"}>user3</Button>
@@ -89,10 +91,10 @@ const VoteList: React.FC = () => {
                                     {voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}
                                 </Grid>
                                 <Grid item container style={{gap:8}}>
-                                    <Button onClick={handleClickDetail} variant="outlined">자세히보기</Button>
+                                    <Button onClick={handleClickDetail} name={voting.id} variant="outlined">자세히보기</Button>
                                     {
                                         userId==="admin"
-                                        ?<Button onClick={handleClickUpdate} variant="outlined">수정하기</Button>
+                                        ?<Button onClick={handleClickUpdate} name={voting.id} variant="outlined">수정하기</Button>
                                         :null
                                     }
                                 </Grid>
