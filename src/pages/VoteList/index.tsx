@@ -1,53 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 import { login } from '../../modules/main';
 import { RootState } from '../../modules';
-
-const Container = styled.div`
-    max-width: 600px;
-    height: 100vh;
-    margin: 0px auto;
-    border: solid 1px black;
-    background: #ebebeb;
-`;
+import { Container } from '../../components/common';
+import { useHistory } from 'react-router-dom';
+import { Box, Button, Typography } from '@material-ui/core';
 
 const VoteList: React.FC = () => {
     const userId = useSelector((state: RootState) => state.main.id)
+    const history = useHistory();
     const dispatch = useDispatch();
     const handleClickUser = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         dispatch(login(e.currentTarget.value))
     }
+    const handleClickWrite = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        history.push('/write');
+    }
     return (
         <Container>
+            {/* 로그인 */}
             <div style={{
                 padding: 10,
                 background: '#888888'
             }}>
-                <div style={{
-                    color:'#00c896',
-                    fontWeight: 900,
-                }}>
-                    사용자변경({userId})
-                </div>
+                <Typography>
+                    <Box fontWeight={900}>
+                        사용자변경(현재사용자:{userId})
+                    </Box>
+                </Typography>
                 <div style={{
                     display: 'flex',
+                    justifyContent: 'space-between',
                 }}>
-                    <button onClick={handleClickUser} value={"admin"}>투표생성자</button>
-                    <button onClick={handleClickUser} value={"user1"}>사용자1</button>
-                    <button onClick={handleClickUser} value={"user2"}>사용자2</button>
-                    <button onClick={handleClickUser} value={"user3"}>사용자3</button>
-                    <button onClick={handleClickUser} value={"user4"}>사용자4</button>
-                    <button onClick={handleClickUser} value={"user5"}>사용자5</button>
-                    <button onClick={handleClickUser} value={"user6"}>사용자6</button>
+                    <Button onClick={handleClickUser} value={"admin"} variant={"contained"} size={"small"}>생성자</Button>
+                    <Button onClick={handleClickUser} value={"user1"} variant={"contained"} size={"small"}>user1</Button>
+                    <Button onClick={handleClickUser} value={"user2"} variant={"contained"} size={"small"}>user2</Button>
+                    <Button onClick={handleClickUser} value={"user3"} variant={"contained"} size={"small"}>user3</Button>
+                    <Button onClick={handleClickUser} value={"user4"} variant={"contained"} size={"small"}>user4</Button>
+                    <Button onClick={handleClickUser} value={"user5"} variant={"contained"} size={"small"}>user5</Button>
+                    <Button onClick={handleClickUser} value={"user6"} variant={"contained"} size={"small"}>user6</Button>
                 </div>
             </div>
+            {/* 투표 생성 */}
             <div style={{
                 margin: 10,
                 display: 'flex',
                 justifyContent: 'flex-end',
             }}>
-                <button disabled={userId!=="admin"}>투표생성</button>
+                <Button onClick={handleClickWrite} disabled={userId!=="admin"} variant={"outlined"}>투표생성</Button>
             </div>
         </Container>
     )
