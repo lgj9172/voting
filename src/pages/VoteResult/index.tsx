@@ -1,12 +1,12 @@
 import { Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, OutlinedInput, TextField, Typography } from '@material-ui/core';
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { Container } from '../../components/common';
+import { Container, Tag } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
 import db from '../../database/firebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../modules';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckIcon from '@material-ui/icons/Check';
 
 const VoteResult: React.FC = () => {
     const history = useHistory();
@@ -19,6 +19,7 @@ const VoteResult: React.FC = () => {
     const tomorrow = new Date();
     now.setTime(now.getTime()+3600000*9); // 현재한국현지시간
     tomorrow.setTime(now.getTime()+3600000*24); // 내일한국현지시간
+    const [nowDateTime, setNowDateTime] = useState(now.toISOString().substr(0, 19));
     const [startDateTime, setStartDateTime] = useState(now.toISOString().substr(0, 19));
     const [finishDateTime, setFinishDateTime] = useState(tomorrow.toISOString().substr(0, 19));
     const [options, setOptions] = useState(["","",""]);
@@ -74,7 +75,7 @@ const VoteResult: React.FC = () => {
                                 <InputLabel shrink>
                                     내용
                                 </InputLabel>
-                                <Typography variant={"body1"}>
+                                <Typography variant={"body2"}>
                                     {content}
                                 </Typography>
                             </Grid>
@@ -83,7 +84,7 @@ const VoteResult: React.FC = () => {
                                     <InputLabel shrink>
                                         시작일시
                                     </InputLabel>
-                                    <Typography variant={"body1"}>
+                                    <Typography variant={"body2"}>
                                         {startDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
@@ -91,8 +92,38 @@ const VoteResult: React.FC = () => {
                                     <InputLabel shrink>
                                         종료일시
                                     </InputLabel>
-                                    <Typography variant={"body1"}>
+                                    <Typography variant={"body2"}>
                                         {finishDateTime.replace("T"," ")}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid item container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <InputLabel shrink>
+                                        진행중여부
+                                    </InputLabel>
+                                    <Typography component="div" variant={"body2"}>
+                                        {
+                                            finishDateTime > nowDateTime && startDateTime < nowDateTime
+                                            ?<Tag bgcolor="success.main">진행중</Tag>
+                                            :finishDateTime < nowDateTime
+                                            ?<Tag bgcolor="text.disabled">종료됨</Tag>
+                                            :startDateTime > nowDateTime
+                                            ?<Tag bgcolor="info.main">진행예정</Tag>
+                                            :""
+                                        }
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <InputLabel shrink>
+                                        참여여부
+                                    </InputLabel>
+                                    <Typography component="div" variant={"body2"}>
+                                        {
+                                            selectedIndex > -1
+                                            ?<Tag bgcolor="info.main">참여함</Tag>
+                                            :<Tag bgcolor="error.main">참여하지않음</Tag>
+                                        }
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -105,14 +136,18 @@ const VoteResult: React.FC = () => {
                                         options.map((option:string, index:number)=>{
                                             const count = Object.values(result).filter(e=>e===index).length;
                                             const total = Object.keys(result).length;
-                                            const props = count / (total||1) * 100 // count가 0인 경우 대비
+                                            const props = Number((count / (total||1) * 100).toFixed(2)) // count가 0인 경우 대비
                                             return (
-                                                <Grid item key={option}>
-                                                    <Typography variant={"body2"}>
-                                                        {`${option} (${count}/${total}, ${props}%)`}
-                                                        {selectedIndex===index?<CheckCircleIcon color="primary"/>:null}
-                                                    </Typography>
-                                                    <LinearProgress variant="determinate" value={props}  color="primary"/>
+                                                <Grid item container direction="column" justify="flex-start" alignItems="stretch" key={option} style={{padding:"10px 0px", gap:"8px"}}>
+                                                    <Grid item>
+                                                        <Typography variant={"body2"}>
+                                                            {`${option} (${count}/${total}, ${props}%)`}
+                                                            &nbsp;{selectedIndex===index?<Tag bgcolor="primary.main"><CheckIcon fontSize="small"/>여기 투표했어요</Tag>:null}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <LinearProgress variant="determinate" value={props}  color="primary"/>
+                                                    </Grid>
                                                 </Grid>
                                             )
                                         })
