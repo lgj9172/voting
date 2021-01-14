@@ -100,8 +100,10 @@ const VoteWrite: React.FC = () => {
             return false;
         }else if(options.filter(value=>value==="").length>0){
             alert("입력되지 않은 옵션이 있습니다.")
+            return false;
         }else if(new Set(options).size !== options.length){
             alert("내용이 중복된 옵션이 있습니다.")
+            return false;
         }
         return true;
     };
