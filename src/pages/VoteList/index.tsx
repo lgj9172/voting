@@ -9,20 +9,25 @@ import db from '../../database/firebase';
 
 const StyledChangeUserGrid = muiStyled(Grid)({
     background: "#00C896",
-    borderRadius:"5px",
-    padding:"10px",
-    gap:"8px",
+    borderRadius: "5px",
+    padding: "10px",
+    gap: "8px",
+});
+
+const StyledChangeUserButton = muiStyled(Button)({
+    border: "solid 1px #FFFFFF",
+    color: "#FFFFFF",
 });
 
 const StyledVoteGrid = muiStyled(Grid)({
-    border:"solid 1px lightgray",
-    borderRadius:"5px",
-    padding:"10px",
-    gap:"8px",
+    border: "solid 1px lightgray",
+    borderRadius: "5px",
+    padding: "10px",
+    gap: "8px",
 });
 
 const StyledGapGrid = muiStyled(Grid)({
-    gap:"8px",
+    gap: "8px",
 });
 
 const VoteList: React.FC = () => {
@@ -76,13 +81,13 @@ const VoteList: React.FC = () => {
                     </Typography>
                 </Grid>
                 <StyledGapGrid item container direction="row" justify="flex-start" alignItems="center">
-                    <Button onClick={handleClickUser} value={"admin"} variant={"outlined"} size={"small"}>admin</Button>
-                    <Button onClick={handleClickUser} value={"user1"} variant={"outlined"} size={"small"}>user1</Button>
-                    <Button onClick={handleClickUser} value={"user2"} variant={"outlined"} size={"small"}>user2</Button>
-                    <Button onClick={handleClickUser} value={"user3"} variant={"outlined"} size={"small"}>user3</Button>
-                    <Button onClick={handleClickUser} value={"user4"} variant={"outlined"} size={"small"}>user4</Button>
-                    <Button onClick={handleClickUser} value={"user5"} variant={"outlined"} size={"small"}>user5</Button>
-                    <Button onClick={handleClickUser} value={"user6"} variant={"outlined"} size={"small"}>user6</Button>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"admin"} size={"small"}>admin</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user1"} size={"small"}>user1</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user2"} size={"small"}>user2</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user3"} size={"small"}>user3</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user4"} size={"small"}>user4</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user5"} size={"small"}>user5</StyledChangeUserButton>
+                    <StyledChangeUserButton onClick={handleClickUser} value={"user6"} size={"small"}>user6</StyledChangeUserButton>
                 </StyledGapGrid>
             </StyledChangeUserGrid>
             {/* 투표 생성 */}
@@ -106,14 +111,9 @@ const VoteList: React.FC = () => {
                     {
                         votings.map((voting:any)=>
                             <StyledVoteGrid item container direction="column" justify="flex-start" alignItems="stretch" key={voting.title}>
-                                <Grid item>
-                                    <Typography variant={"h5"}>{voting.title}</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant={"body2"}>{voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant={"body2"}>
+                                <Grid item container alignItems="center">
+                                    <Typography component="span" variant={"h5"}>{voting.title}</Typography>&nbsp;
+                                    <Typography component="span" variant={"body2"}>
                                         {
                                             voting.finishDateTime > nowDateTime && voting.startDateTime < nowDateTime
                                             ?<Tag bgcolor="success.main">진행중</Tag>
@@ -123,8 +123,13 @@ const VoteList: React.FC = () => {
                                             ?<Tag bgcolor="info.main">진행예정</Tag>
                                             :""
                                         }
-                                        {` 생성자 : ${voting.writer}`}
                                     </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant={"body2"}>{voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant={"body2"}>{` 생성자 : ${voting.writer}`}</Typography>
                                 </Grid>
                                 <StyledGapGrid item container>
                                     {
