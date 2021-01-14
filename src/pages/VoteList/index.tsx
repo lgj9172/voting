@@ -2,10 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../modules/main';
 import { RootState } from '../../modules';
-import { Container } from '../../components/common';
+import { Container, Tag } from '../../components/common';
 import { useHistory } from 'react-router-dom';
-import { Box, Button, Grid, Typography } from '@material-ui/core';
+import { Box, Button, Grid, styled as muiStyled, Typography } from '@material-ui/core';
 import db from '../../database/firebase';
+
+const StyledChangeUserGrid = muiStyled(Grid)({
+    background: "#00C896",
+    borderRadius:"5px",
+    padding:"10px",
+    gap:"8px",
+});
+
+const StyledVoteGrid = muiStyled(Grid)({
+    border:"solid 1px lightgray",
+    borderRadius:"5px",
+    padding:"10px",
+    gap:"8px",
+});
+
+const StyledGapGrid = muiStyled(Grid)({
+    gap:"8px",
+});
 
 const VoteList: React.FC = () => {
     const userId = useSelector((state: RootState) => state.main.id)
@@ -48,30 +66,27 @@ const VoteList: React.FC = () => {
     },[])
     return (
         <Container>
-            {/* 로그인 */}
-            <div style={{
-                padding: 10,
-                background: '#888888'
-            }}>
-                <Typography component="div">
-                    <Box fontWeight={900}>
-                        사용자변경하기(현재사용자:{userId})
-                    </Box>
-                </Typography>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                }}>
-                    <Button onClick={handleClickUser} value={"admin"} variant={"contained"} size={"small"}>admin</Button>
-                    <Button onClick={handleClickUser} value={"user1"} variant={"contained"} size={"small"}>user1</Button>
-                    <Button onClick={handleClickUser} value={"user2"} variant={"contained"} size={"small"}>user2</Button>
-                    <Button onClick={handleClickUser} value={"user3"} variant={"contained"} size={"small"}>user3</Button>
-                    <Button onClick={handleClickUser} value={"user4"} variant={"contained"} size={"small"}>user4</Button>
-                    <Button onClick={handleClickUser} value={"user5"} variant={"contained"} size={"small"}>user5</Button>
-                    <Button onClick={handleClickUser} value={"user6"} variant={"contained"} size={"small"}>user6</Button>
-                </div>
-            </div>
+            {/* 사용자 변경 */}
+            <StyledChangeUserGrid container direction="column" justify="flex-start" alignItems="stretch">
+                <Grid item>
+                    <Typography component="div">
+                        <Box>
+                            사용자변경(현재: {userId})
+                        </Box>
+                    </Typography>
+                </Grid>
+                <StyledGapGrid item container direction="row" justify="flex-start" alignItems="center">
+                    <Button onClick={handleClickUser} value={"admin"} variant={"outlined"} size={"small"}>admin</Button>
+                    <Button onClick={handleClickUser} value={"user1"} variant={"outlined"} size={"small"}>user1</Button>
+                    <Button onClick={handleClickUser} value={"user2"} variant={"outlined"} size={"small"}>user2</Button>
+                    <Button onClick={handleClickUser} value={"user3"} variant={"outlined"} size={"small"}>user3</Button>
+                    <Button onClick={handleClickUser} value={"user4"} variant={"outlined"} size={"small"}>user4</Button>
+                    <Button onClick={handleClickUser} value={"user5"} variant={"outlined"} size={"small"}>user5</Button>
+                    <Button onClick={handleClickUser} value={"user6"} variant={"outlined"} size={"small"}>user6</Button>
+                </StyledGapGrid>
+            </StyledChangeUserGrid>
             {/* 투표 생성 */}
+
             <div style={{
                 margin: 10,
                 display: 'flex',
@@ -80,7 +95,7 @@ const VoteList: React.FC = () => {
                 <Button onClick={handleClickWrite} disabled={userId!=="admin"} variant={"outlined"}>투표생성</Button>
             </div>
             {/* 목록 생성 */}
-            <Grid container direction="column" justify="flex-start" alignItems="stretch" style={{gap:"8px"}}>
+            <StyledGapGrid container direction="column" justify="flex-start" alignItems="stretch">
             {
                 status==="before"
                 ?<Grid item>
@@ -90,30 +105,28 @@ const VoteList: React.FC = () => {
                 ?<React.Fragment>
                     {
                         votings.map((voting:any)=>
-                            <Grid item container direction="column" justify="flex-start" alignItems="stretch" key={voting.title} style={{border:"solid 1px gray", padding:"10px", gap:"8px"}}>
+                            <StyledVoteGrid item container direction="column" justify="flex-start" alignItems="stretch" key={voting.title}>
                                 <Grid item>
                                     <Typography variant={"h5"}>{voting.title}</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant={"body1"}>{voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}</Typography>
+                                    <Typography variant={"body2"}>{voting.startDateTime.replace("T"," ")} ~ {voting.finishDateTime.replace("T"," ")}</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant={"body1"}>{`생성자 : ${voting.writer}`}</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant={"body1"}>
+                                    <Typography variant={"body2"}>
                                         {
                                             voting.finishDateTime > nowDateTime && voting.startDateTime < nowDateTime
-                                            ?"진행중"
+                                            ?<Tag bgcolor="success.main">진행중</Tag>
                                             :voting.finishDateTime < nowDateTime
-                                            ?"투표종료"
+                                            ?<Tag bgcolor="text.disabled">종료됨</Tag>
                                             :voting.startDateTime > nowDateTime
-                                            ?"투표진행전"
+                                            ?<Tag bgcolor="info.main">진행예정</Tag>
                                             :""
                                         }
+                                        {` 생성자 : ${voting.writer}`}
                                     </Typography>
                                 </Grid>
-                                <Grid item container style={{gap:8}}>
+                                <StyledGapGrid item container>
                                     {
                                         userId==="admin"
                                         ?<Button onClick={handleClickUpdate} name={voting.id} variant="outlined">수정하기</Button>
@@ -129,8 +142,8 @@ const VoteList: React.FC = () => {
                                         ?<Button onClick={handleClickResult} name={voting.id} variant="outlined">결과보기</Button>
                                         :null
                                     }
-                                </Grid>
-                            </Grid>
+                                </StyledGapGrid>
+                            </StyledVoteGrid>
                         )
                     }
                 </React.Fragment>
@@ -140,7 +153,7 @@ const VoteList: React.FC = () => {
                 </React.Fragment>
                 :null
             }
-            </Grid>
+            </StyledGapGrid>
         </Container>
     )
 };
