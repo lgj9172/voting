@@ -172,7 +172,7 @@ const VoteResult: React.FC = () => {
                                             return (
                                                 <Grid item container direction="column" justify="flex-start" alignItems="stretch" key={option} style={{padding:"10px 0px", gap:"8px"}}>
                                                     <Grid item>
-                                                        <Typography variant={"body2"}>
+                                                        <Typography component="div" variant={"body2"}>
                                                             {`${option} (${count}/${total}, ${props}%)`}
                                                             &nbsp;{selectedIndex===index?<Tag bgcolor="primary.main"><CheckIcon fontSize="small"/>여기 투표했어요</Tag>:null}
                                                         </Typography>
