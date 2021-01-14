@@ -57,6 +57,16 @@ const VoteUpdate: React.FC = () => {
         if(window.confirm("정말 취소하시겠습니까?")){
             history.push("/");
         }
+    };    
+    const handleClickRemove = () => {
+        if(window.confirm("정말 삭제하시겠습니까?")){
+            db.collection("voting").doc(docId).delete().then(()=>{
+                alert("삭제 되었습니다.");
+                history.push("/");
+            }).catch(function(error){
+                alert("삭제중에 에러가 발생하였습니다.");
+            })
+        }
     };
     const handleClickSave = () => {
         if(validation()){
@@ -90,8 +100,10 @@ const VoteUpdate: React.FC = () => {
             return false;
         }else if(options.filter(value=>value==="").length>0){
             alert("입력되지 않은 옵션이 있습니다.")
+            return false;
         }else if(new Set(options).size !== options.length){
             alert("내용이 중복된 옵션이 있습니다.")
+            return false;
         }
         return true;
     };
@@ -195,6 +207,7 @@ const VoteUpdate: React.FC = () => {
                         </Grid>
                         <Grid item container direction="row" justify="flex-end" style={{padding:"30px 0px", gap:8}}>
                             <Button onClick={handleClickCancel} variant={"outlined"}>취소</Button>
+                            <Button onClick={handleClickRemove} variant={"outlined"}>삭제</Button>
                             <Button onClick={handleClickSave} variant={"outlined"}>저장</Button>
                         </Grid>
                     </React.Fragment>
