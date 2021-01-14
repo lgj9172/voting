@@ -14,6 +14,11 @@ const theme = createMuiTheme({
   typography: {
     fontFamily: '"Noto Sans KR", serif',
   },
+  palette: {
+    primary: {
+      main: '#00C896'
+    }
+  }
 })
 
 ReactDOM.render(

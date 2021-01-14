@@ -33,8 +33,8 @@ const VoteSelect: React.FC = () => {
     const handleClickSave = () => {
         if(validation()){
             if(window.confirm("투표 하시겠습니까?")){
-                const obj:any = {"result":{}};
-                obj.result[userId] = selectedIndex;
+                const obj:any = {};
+                obj[`result.${userId}`] = selectedIndex;
                 db.collection("voting").doc(docId).update(obj).then(()=>{
                     alert("투표 완료되었습니다.");
                     history.push("/");
