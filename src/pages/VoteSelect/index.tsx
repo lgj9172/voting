@@ -54,13 +54,17 @@ const VoteSelect: React.FC = () => {
     useEffect(()=>{
         db.collection("voting").doc(docId).get().then((doc) => {
             const data = doc.data();
-            setTitle(data?.title);
-            setContent(data?.content);
-            setStartDateTime(data?.startDateTime);
-            setFinishDateTime(data?.finishDateTime);
-            setOptions(data?.options);
-            setSelectedIndex(data?.result[userId]===undefined?-1:data.result[userId]);
-            setStatus("done");
+            if(data===undefined){
+                setStatus("nodata");
+            }else{
+                setTitle(data.title);
+                setContent(data.content);
+                setStartDateTime(data.startDateTime);
+                setFinishDateTime(data.finishDateTime);
+                setOptions(data.options);
+                setSelectedIndex(data.result[userId]===undefined?-1:data.result[userId]);
+                setStatus("done");
+            }
         }).catch((error)=>{
             setStatus("error");
         });
@@ -80,6 +84,10 @@ const VoteSelect: React.FC = () => {
                     status==="before"
                     ?<Grid item>
                         데이터를 불러오는 중입니다.
+                    </Grid>
+                    :status==="nodata"
+                    ?<Grid item>
+                        데이터베이스에서 찾을 수 없는 투표입니다.
                     </Grid>
                     :status==="done"
                     ?<React.Fragment>

@@ -25,21 +25,45 @@ const VoteResult: React.FC = () => {
     const [options, setOptions] = useState(["","",""]);
     const [status, setStatus] = useState("before");
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-    const [result, setResult] = useState({});
+    const [result, setResult] = useState<any>({});
+    const [maxCountOptions, setMaxCountOptions] = useState<string[]>([]);
     const handleClickConfirm = () => {
         history.push("/");
     };
     useEffect(()=>{
         db.collection("voting").doc(docId).get().then((doc) => {
             const data = doc.data();
-            setTitle(data?.title);
-            setContent(data?.content);
-            setStartDateTime(data?.startDateTime);
-            setFinishDateTime(data?.finishDateTime);
-            setOptions(data?.options);
-            setSelectedIndex(data?.result[userId]===undefined?-1:data.result[userId]);
-            setResult(data?.result);
-            setStatus("done");
+            if(data===undefined){
+                setStatus("nodata");
+            }else{
+                setTitle(data.title);
+                setContent(data.content);
+                setStartDateTime(data.startDateTime);
+                setFinishDateTime(data.finishDateTime);
+                setOptions(data.options);
+                setSelectedIndex(data.result[userId]===undefined?-1:data.result[userId]);
+                setResult(data.result);
+                // 최빈값 구하기
+                const voteTotalCount = Object.keys(data.result).length;
+                const voteIndexCounter = new Map();
+                const voteIndexs = Object.values(data.result);
+                voteIndexs.forEach((voteValue)=>{
+                    if(voteIndexCounter.has(voteValue)){
+                        voteIndexCounter.set(voteValue, voteIndexCounter.get(voteValue)+1)
+                    }else{
+                        voteIndexCounter.set(voteValue, 1)
+                    }
+                })
+                const maxCount = Math.max(...Array.from(voteIndexCounter.values()))
+                const maxCountOptions = new Array();
+                voteIndexCounter.forEach((value, key) => {
+                    if(value===maxCount){
+                        maxCountOptions.push(data.options[key]);
+                    }
+                })
+                setMaxCountOptions(maxCountOptions);
+                setStatus("done");
+            }
         }).catch((error)=>{
             setStatus("error");
         });
@@ -59,6 +83,10 @@ const VoteResult: React.FC = () => {
                     status==="before"
                     ?<Grid item>
                         데이터를 불러오는 중입니다.
+                    </Grid>
+                    :status==="nodata"
+                    ?<Grid item>
+                        데이터베이스에서 찾을 수 없는 투표입니다.
                     </Grid>
                     :status==="done"
                     ?<React.Fragment>
@@ -105,9 +133,13 @@ const VoteResult: React.FC = () => {
                                     <Typography component="div" variant={"body2"}>
                                         {
                                             finishDateTime > nowDateTime && startDateTime < nowDateTime
-                                            ?<Tag bgcolor="success.main">진행중</Tag>
+                                            ?<React.Fragment>
+                                                <Tag bgcolor="success.main">진행중</Tag>&nbsp;{maxCountOptions.join(", ")}
+                                            </React.Fragment>
                                             :finishDateTime < nowDateTime
-                                            ?<Tag bgcolor="text.disabled">종료됨</Tag>
+                                            ?<React.Fragment>
+                                                <Tag bgcolor="text.disabled">종료됨</Tag>&nbsp;{maxCountOptions.join(", ")}
+                                            </React.Fragment>
                                             :startDateTime > nowDateTime
                                             ?<Tag bgcolor="info.main">진행예정</Tag>
                                             :""
