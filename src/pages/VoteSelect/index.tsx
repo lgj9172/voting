@@ -96,7 +96,7 @@ const VoteSelect: React.FC = () => {
                                 <InputLabel shrink>
                                     내용
                                 </InputLabel>
-                                <Typography variant={"body1"}>
+                                <Typography variant={"body2"}>
                                     {content}
                                 </Typography>
                             </Grid>
@@ -105,7 +105,7 @@ const VoteSelect: React.FC = () => {
                                     <InputLabel shrink>
                                         시작일시
                                     </InputLabel>
-                                    <Typography variant={"body1"}>
+                                    <Typography variant={"body2"}>
                                         {startDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
@@ -113,7 +113,7 @@ const VoteSelect: React.FC = () => {
                                     <InputLabel shrink>
                                         종료일시
                                     </InputLabel>
-                                    <Typography variant={"body1"}>
+                                    <Typography variant={"body2"}>
                                         {finishDateTime.replace("T"," ")}
                                     </Typography>
                                 </Grid>
