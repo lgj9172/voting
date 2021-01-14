@@ -1,4 +1,4 @@
-import { Box, Button, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, OutlinedInput, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, OutlinedInput, TextField, Typography } from '@material-ui/core';
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -50,6 +50,9 @@ const VoteResult: React.FC = () => {
                     <Typography variant={"h4"}>
                         투표결과확인
                     </Typography>
+                </Grid>
+                <Grid item style={{padding:"0px 0px 10px"}}>
+                    <Divider/>
                 </Grid>
                 {
                     status==="before"

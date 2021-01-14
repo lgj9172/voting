@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@material-ui/core';
+import { Button, Divider, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@material-ui/core';
 import React, { ChangeEvent, useCallback, useState } from 'react';
 import { Container } from '../../components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -112,6 +112,9 @@ const VoteWrite: React.FC = () => {
                     <Typography variant={"h4"}>
                         투표 등록
                     </Typography>
+                </Grid>
+                <Grid item style={{padding:"0px 0px 10px"}}>
+                    <Divider/>
                 </Grid>
                 <Grid item container direction={"column"} justify={"flex-start"} alignItems={"stretch"} style={{gap:8}}>
                     <Grid item>
