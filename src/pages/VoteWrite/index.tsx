@@ -104,6 +104,9 @@ const VoteWrite: React.FC = () => {
         }else if(new Set(options).size !== options.length){
             alert("내용이 중복된 옵션이 있습니다.")
             return false;
+        }else if(options.length===0){
+            alert("옵션은 적어도 하나 이상 있어야 합니다.")
+            return false;
         }
         return true;
     };
